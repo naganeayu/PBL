@@ -1,10 +1,12 @@
 #docker run -e PASSWORD={パスワード} -p 8787:8787 -d ando6oid/neo-mecab
 #install.packages ("RMeCab", repos = "http://rmecab.jp/R", type = "source")
 #install.packages("wordcloud")
+#install.packages("igraph", dependencies = TRUE)
 library(RMeCab)
 library(dplyr)
 library(ggplot2)
 library(wordcloud)
+library(igraph)
 
 src <- "1.txt"
 freq <- RMeCabFreq(src)
@@ -34,3 +36,17 @@ sorted %>%
 
 #ワードクラウド
 wordcloud(freq4$Term, freq4$Freq, min.freq=4, color=brewer.pal(8, "Dark2"), family="IPAMincho")
+
+######################################################
+#共起ネットワーク
+######################################################
+
+#共起語の集計
+NgramResult <- NgramDF("1.txt", type=1, N=2, pos=c("名詞", "動詞", "形容詞", "副詞"))
+
+#共起頻度2以上のペアのみを抽出
+NgramResult_pair <- subset(NgramResult, Freq>2)
+
+#ネットワークの描画
+g <- graph.data.frame(NgramResult_pair, directed=FALSE)
+plot(g, vertex.label = V(g)$name, vertex.color="grey")
