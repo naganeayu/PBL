@@ -44,7 +44,7 @@ wordcloud(freq4$Term, freq4$Freq, min.freq=4, color=brewer.pal(8, "Dark2"), fami
 #共起語の集計
 NgramResult <- NgramDF("1.txt", type=1, N=2, pos=c("名詞", "動詞", "形容詞", "副詞"))
 
-#共起頻度2以上のペアのみを抽出
+#共起頻度3以上のペアのみを抽出
 NgramResult_pair <- subset(NgramResult, Freq>2)
 
 #ネットワークの描画
