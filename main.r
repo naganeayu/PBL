@@ -41,8 +41,17 @@ wordcloud(freq4$Term, freq4$Freq, min.freq=4, color=brewer.pal(8, "Dark2"), fami
 #共起ネットワーク
 ######################################################
 
+#前処理
+text <- scan("1.txt", what = character(), blank.lines.skip = T)
+text <- gsub("[[:blank:]]","",text)# 全角半角空白とタブ削除
+text <- gsub("ジョブディスクリプション","ジョブデスクリプション",text)
+text <- gsub("デイリースタンドアップ","デイリー・スタンドアップ",text)
+text <- gsub("コンピュータサイエンス","コンピュータ・サイエンス",text)
+text <- gsub("チームグループ","チーム・グループ",text)
+write(text, "amended.txt", append=F)
+
 #共起語の集計
-NgramResult <- NgramDF("1.txt", type=1, N=2, pos=c("名詞", "動詞", "形容詞", "副詞"))
+NgramResult <- NgramDF("amended.txt", type=1, N=2, pos=c("名詞", "動詞", "形容詞", "副詞"))
 
 #共起頻度3以上のペアのみを抽出
 NgramResult_pair <- subset(NgramResult, Freq>2)
