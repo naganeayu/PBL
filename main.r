@@ -8,7 +8,18 @@ library(ggplot2)
 library(wordcloud)
 library(igraph)
 
+#ファイルを一つにまとめる
+text1 <- scan("a.txt", what = character(), sep = "\n", blank.lines.skip = T)
+text2 <- scan("b.txt", what = character(), sep = "\n", blank.lines.skip = T)
+text3 <- scan("c.txt", what = character(), sep = "\n", blank.lines.skip = T)
+
+alltext <- paste(text1, text2, text3)
+
 src <- "1.txt"
+
+#ファイルに上書き
+write(alltext, src, append=F)
+
 freq <- RMeCabFreq(src)
 
 #品詞
@@ -58,4 +69,9 @@ NgramResult_pair <- subset(NgramResult, Freq>2)
 
 #ネットワークの描画
 g <- graph.data.frame(NgramResult_pair, directed=FALSE)
-plot(g, vertex.label = V(g)$name, vertex.color="grey")
+#plot(g, vertex.label = V(g)$name, vertex.color="grey")
+plot(g, vartex.color="SkyBlue", vertex.size=3,
+     vertex.label.cex=1, #形態素のサイズ
+     vertex.label.dist=.8, #ラベルを円から離す
+     edge.width=E(g)$weight,#エッジのサイズを調整する
+     vertex.label.family="JP1")
