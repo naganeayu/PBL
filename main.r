@@ -62,15 +62,35 @@ text <- gsub("チームグループ","チーム・グループ",text)
 write(text, "amended.txt", append=F)
 
 #共起語の集計
-NgramResult <- NgramDF("amended.txt", type=1, N=2, pos=c("名詞", "動詞", "形容詞", "副詞"))
+#NgramResult <- NgramDF("amended.txt", type=1, N=2, pos=c("名詞", "動詞", "形容詞", "副詞"))
+NgramResult <- docDF("amended.txt", type=1, N=2, pos=c("名詞", "形容詞"), nDF=1)
+
+#品詞細分類のパターン
+#NgramResult %>% use_series(POS2) %>% unique()
+
+#品詞細分類が「数」は「接尾」「非自立」ではない要素を取り出す
+NgramResult2 <- NgramResult %>% select(everything(),
+                            FREQ = amended.txt) %>% filter(!grepl("数|接尾|非自立",
+                                                            POS2))%>% filter(!grepl("A|B|C", N1))%>% filter(!grepl("A|B|C", N2))
 
 #共起頻度3以上のペアのみを抽出
-NgramResult_pair <- subset(NgramResult, Freq>2)
+#NgramResult_pair <- subset(NgramResult, Freq>2)
+
+#頻度10以上のみ
+NgramResult3 <- NgramResult2 %>% filter(FREQ > 9)
 
 #ネットワークの描画
-g <- graph.data.frame(NgramResult_pair, directed=FALSE)
-#plot(g, vertex.label = V(g)$name, vertex.color="grey")
-plot(g, vartex.color="SkyBlue", vertex.size=3,
+g <- graph.data.frame(NgramResult3, directed=FALSE)
+
+plot(g, vertex.color="orange", vertex.size=3,
+     vertex.label.cex=1, #形態素のサイズ
+     vertex.label.dist=.8, #ラベルを円から離す
+     edge.width=E(g)$weight,#エッジのサイズを調整する
+     vertex.label.family="JP1")
+
+#コミュニティ
+com <- edge.betweenness.community(g, weights=E(g)$weight, directed=FALSE)
+plot(com, g, vertex.size=3,
      vertex.label.cex=1, #形態素のサイズ
      vertex.label.dist=.8, #ラベルを円から離す
      edge.width=E(g)$weight,#エッジのサイズを調整する
