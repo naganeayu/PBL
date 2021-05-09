@@ -36,6 +36,9 @@ freq4 <- subset(freq3, Term %not.in% c("する","ある","その","なる"))
 #ソート
 sorted <- freq4[order(freq4$Freq, decreasing = T),]
 
+#CSVに書きだす、エンコーディングは適宜
+#write.csv(sorted,"sorted_all.csv", fileEncoding = "shift-jis")
+
 #出現頻度のグラフ
 sorted %>%
   filter(Freq >=6) %>%
@@ -68,7 +71,7 @@ NgramResult <- docDF("amended.txt", type=1, N=2, pos=c("名詞", "形容詞"), n
 #品詞細分類のパターン
 #NgramResult %>% use_series(POS2) %>% unique()
 
-#品詞細分類が「数」は「接尾」「非自立」ではない要素を取り出す
+#品詞細分類が「数」「接尾」「非自立」ではない要素を取り出す（A|B|Cは削除したい人名などを想定）
 NgramResult2 <- NgramResult %>% select(everything(),
                             FREQ = amended.txt) %>% filter(!grepl("数|接尾|非自立",
                                                             POS2))%>% filter(!grepl("A|B|C", N1))%>% filter(!grepl("A|B|C", N2))
