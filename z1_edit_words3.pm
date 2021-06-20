@@ -2,6 +2,10 @@ package z1_edit_words3;
 use utf8;
 
 my $config = {
+	'雑談' =>
+			[
+				'おしゃべり',
+			],
 	'テレワーク' =>
 			[
 				'リモートワーク',
